@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advisor Tool - Multi Language</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- ESTÉTICA OPERATIVA --- */
+        :root {
+            --color-black: #222;
+            --color-selected: #000;
+            --color-text: #333;
+            --color-gold: #c6a87c;
+            --color-bg: #ffffff;
+            --color-light-grey: #f4f4f4;
+            --font-sans: 'Lato', sans-serif;
+            --font-serif: 'Playfair Display', serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.6;
+            padding-top: 20px;
+        }
+
+        header {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px 20px 20px;
+            display: flex;
+            justify-content: flex-end; /* Alinear toggle a la derecha */
+        }
+
+        main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px 20px 20px;
+        }
+
+        /* --- TOGGLE DE IDIOMA CREATIVO --- */
+        .lang-switch {
+            position: relative;
+            display: inline-flex;
+            background: #eee;
+            border-radius: 30px;
+            padding: 4px;
+            cursor: pointer;
+            user-select: none;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .lang-option {
+            padding: 6px 16px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            z-index: 2;
+            color: #888;
+            transition: color 0.3s;
+            text-transform: uppercase;
+            position: relative;
+        }
+
+        .lang-switch.es .opt-es { color: white; }
+        .lang-switch.en .opt-en { color: white; }
+
+        /* La "burbuja" deslizante */
+        .switch-bg {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: calc(50% - 4px);
+            height: calc(100% - 8px);
+            background: var(--color-black);
+            border-radius: 20px;
+            transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+            z-index: 1;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .lang-switch.en .switch-bg {
+            transform: translateX(100%);
+            left: 2px; /* Ajuste fino */
+        }
+
+
+        /* --- 1. BOTONES DE NECESIDAD --- */
+        .concerns-grid-nav {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .concern-card {
+            background: white;
+            border: 1px solid #ddd;
+            padding: 15px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 80px;
+            border-radius: 6px;
+            user-select: none;
+        }
+
+        .concern-card span {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 700;
+            color: #555;
+            pointer-events: none; /* Evita clicks en el texto */
+        }
+
+        .concern-card:hover { border-color: #bbb; }
+        
+        .concern-card.active {
+            background-color: var(--color-selected);
+            border-color: var(--color-selected);
+            color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .concern-card.active span { color: white; }
+
+
+        /* --- 2. BARRA DE MARCAS --- */
+        .brands-container {
+            background-color: var(--color-light-grey);
+            padding: 15px 20px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+
+        .filter-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #999;
+            margin-right: 5px;
+            min-width: 60px;
+        }
+
+        .brand-btn {
+            background: #ffffff;
+            border: 1px solid #ddd;
+            padding: 8px 16px;
+            border-radius: 6px; 
+            font-size: 0.85rem;
+            color: #555;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+        
+        .brand-btn:hover { border-color: #999; color: #333; }
+        
+        .brand-btn.active {
+            background-color: var(--color-black);
+            color: white;
+            border-color: var(--color-black);
+        }
+
+
+        /* --- 3. GRID RESULTADOS --- */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .product-card {
+            background: transparent;
+            text-align: center;
+            cursor: pointer;
+            animation: fadeIn 0.4s ease forwards;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .img-container {
+            position: relative;
+            background-color: #fff;
+            border: 1px solid #eee;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            border-radius: 6px;
+            transition: border-color 0.3s;
+        }
+        
+        .product-card:hover .img-container { border-color: var(--color-gold); }
+        .product-img { max-height: 80%; max-width: 80%; object-fit: contain; }
+
+        .brand-name { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; color: #aaa; margin-bottom: 4px; }
+        .product-name { font-family: var(--font-serif); font-size: 1.1rem; font-weight: 400; color: var(--color-black); margin-bottom: 6px; }
+        .key-ingredient { display: inline-block; font-size: 0.7rem; border-bottom: 1px solid #ddd; padding-bottom: 1px; color: #666; }
+        
+        .empty-state { 
+            grid-column: 1 / -1; 
+            padding: 40px; 
+            text-align: center; 
+            color: #bbb; 
+            font-style: italic;
+            border: 2px dashed #eee;
+            border-radius: 10px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="lang-switch es" id="langToggle">
+            <div class="switch-bg"></div>
+            <div class="lang-option opt-es">Español</div>
+            <div class="lang-option opt-en">English</div>
+        </div>
+    </header>
+
+    <main>
+        <div class="concerns-grid-nav">
+            <div class="concern-card active" data-concern="deshidratada"><span id="lbl-deshidratada"></span></div>
+            <div class="concern-card" data-concern="arrugas"><span id="lbl-arrugas"></span></div>
+            <div class="concern-card" data-concern="enrojecimiento"><span id="lbl-enrojecimiento"></span></div>
+            <div class="concern-card" data-concern="acne"><span id="lbl-acne"></span></div>
+            <div class="concern-card" data-concern="sensible"><span id="lbl-sensible"></span></div>
+            <div class="concern-card" data-concern="pigmentacion"><span id="lbl-pigmentacion"></span></div>
+        </div>
+
+        <div class="brands-container" id="brandsContainer">
+            <span class="filter-label" id="lbl-brands">Marcas:</span>
+            </div>
+
+        <div class="products-grid" id="resultsGrid"></div>
+    </main>
+
+    <script>
+        /* --- DICCIONARIO DE TRADUCCIÓN --- */
+        const translations = {
+            es: {
+                concerns: {
+                    deshidratada: "Piel deshidratada",
+                    arrugas: "Líneas finas y arrugas",
+                    enrojecimiento: "Enrojecimiento",
+                    acne: "Acné e imperfecciones",
+                    sensible: "Piel sensible",
+                    pigmentacion: "Pigmentación"
+                },
+                ui: {
+                    brands: "Marcas:",
+                    all: "Todas",
+                    empty: "No hay productos con estos filtros."
+                }
+            },
+            en: {
+                concerns: {
+                    deshidratada: "Dehydrated Skin",
+                    arrugas: "Fine Lines & Wrinkles",
+                    enrojecimiento: "Redness",
+                    acne: "Acne & Blemishes",
+                    sensible: "Sensitive Skin",
+                    pigmentacion: "Pigmentation"
+                },
+                ui: {
+                    brands: "Brands:",
+                    all: "All",
+                    empty: "No products match these filters."
+                }
+            }
+        };
+
+        let currentLang = 'es';
+
+        /* --- DATOS (Agregué keyIngredientEn opcional para mostrar capacidad) --- */
+        const productsDB = [
+            { id: 1, brand: "Esfolío", name: "Super Rich Coconut Waterfull Cream", concerns: ["sequedad", "deshidratada", "arrugas", "sensible"], ingredients: ["coco"], keyIngredient: "Aceite de Coco", keyIngredientEn: "Coconut Oil", image: "https://incidecoder-content.storage.googleapis.com/a1dd19d9-7a4a-4ea8-b729-b2185ef48937/products/esfolio-super-rich-coconut-perfecting-cream/esfolio-super-rich-coconut-perfecting-cream_front_photo_300x300@1x.webp"},
+            { id: 2, brand: "Mixsoon", name: "Daily Mask Saturday: Moisture", concerns: ["deshidratada", "sensible"], ingredients: ["hialuronico"], keyIngredient: "Complejo de Ác. Hialurónico", keyIngredientEn: "Hyaluronic Acid Complex", image: "https://mixsoon.us/cdn/shop/files/2_5fb93c6b-9b0e-4040-9c90-fe750c52b1d1.jpg?v=1739930372&width=1200" },
+            { id: 3, brand: "Mixsoon", name: "Daily Mask Friday: Brightening", concerns: ["pigmentacion", "deshidratada"], ingredients: ["niacinamida"], keyIngredient: "Extracto de Espino Amarillo", keyIngredientEn: "Sea Buckthorn Extract", image: "https://mixsoon.us/cdn/shop/files/2_200f258e-3441-48d7-ac2d-7e437fbec01a.jpg?v=1739930372&width=1200" },
+            { id: 4, brand: "Mixsoon", name: "Daily Mask Sunday: Total Care", concerns: ["arrugas", "deshidratada"], ingredients: ["ginseng"], keyIngredient: "Extracto de Ginseng", keyIngredientEn: "Ginseng Extract", image: "https://mixsoon.us/cdn/shop/files/2_2da86c4a-6a29-4e65-84da-6305460504b9.jpg?v=1739930372&width=1200" },
+            { id: 5, brand: "SKIN1004", name: "Madagascar Centella Hyalu-Cica Water-Fit Sun Serum", concerns: ["deshidratada", "sensible", "enrojecimiento"], ingredients: ["hialuronico", "centella"], keyIngredient: "Fórmula Hyalu-Cica", keyIngredientEn: "Hyalu-Cica Formula", image: "https://www.skin1004.com/cdn/shop/files/skin1004-50ml-hyalu-cica-water-fit-sun-serum-uv-1204112543_1440x.png?v=1762764544" },
+            { id: 6, brand: "Centellian24", name: "The Madeca Cream Time Reverse", concerns: ["arrugas", "pigmentacion", "deshidratada", "sensible"], ingredients: ["centella"], keyIngredient: "Active-TECA™ (Centella)", keyIngredientEn: "Active-TECA™ (Centella)", image: "https://www.koreanbeauty.co.uk/cdn/shop/files/MadecaCreamTimeReverse.png?v=1768229841&width=1800" },
+            { id: 7, brand: "Centellian24", name: "Madeca Derma Mask III Intensive Formula", concerns: ["arrugas", "sensible", "deshidratada", "enrojecimiento"], ingredients: ["centella"], keyIngredient: "TECA (Centella Asiatica)", keyIngredientEn: "TECA (Centella Asiatica)", image: "https://pinkstorecosmeticos.com/wp-content/uploads/2025/10/1.webp" },
+            { id: 8, brand: "Centellian24", name: "Madeca Lab PDRN Skin Tightening Glow Gel Mask", concerns: ["arrugas", "pigmentacion", "deshidratada"], ingredients: ["centella"], keyIngredient: "PDRN (ADN de Salmón)", keyIngredientEn: "PDRN (Salmon DNA)", image: "https://madeca.com/cdn/shop/files/PDRN_MASK_28327d8f-ab47-479d-a68d-67194e5b245c.png?v=1766532146&width=2000" },
+            { id: 9, brand: "Centellian24", name: "Madeca Cleansing Foam (Amino Acid)", concerns: ["sensible", "deshidratada", "enrojecimiento"], ingredients: ["centella"], keyIngredient: "TECA + Complejo de Aminoácidos", keyIngredientEn: "TECA + Amino Acid Complex", image: "https://prod.skin-seoul.com/wp-content/uploads/2024/05/thu_100005405_1-1.webp" },
+            { id: 10, brand: "Dr. Althea", name: "345 Relief Cream", concerns: ["acne", "pigmentacion", "enrojecimiento", "sensible"], ingredients: ["niacinamida"], keyIngredient: "Resveratrol + Pantenol", keyIngredientEn: "Resveratrol + Panthenol", image: "https://cdnx.jumpseller.com/exposed-beauty/image/70391935/resize/640/640?1764890154" },
+            { id: 11, brand: "SEOUL 1988", name: "Eye Cream : Retinal Liposome 4% + Fermented Bean", concerns: ["arrugas", "pigmentacion", "deshidratada"], ingredients: ["retinal"], keyIngredient: "Retinal Liposoma 4%", keyIngredientEn: "Retinal Liposome 4%", image: "https://cdn2.surisuri.dk/uploads/products/seoul-1988-eye-cream-retinal-liposome-4-fermented-bean/_product/2081398/k-secret-seoul-1988-eye-cream-retinal-liposome-fermented-bean.webp" },
+            { id: 12, brand: "Muldream", name: "Vegan Green Mild CICA Ampoule", concerns: ["sensible", "enrojecimiento", "acne", "deshidratada"], ingredients: ["centella"], keyIngredient: "Houttuynia Cordata + Centella", keyIngredientEn: "Houttuynia Cordata + Centella", image: "https://thegoodskncompany.com/wp-content/uploads/2023/01/GOODSKN-MULDREAM-CICA-AMPOULE.webp" },
+            { id: 13, brand: "OOTD", name: "Collagen Supreme Mask", concerns: ["arrugas", "deshidratada", "sensible"], ingredients: ["hialuronico"], keyIngredient: "Colágeno Hidrolizado + Péptidos", keyIngredientEn: "Hydrolyzed Collagen + Peptides", image: "https://bellkor.cl/cdn/shop/files/NU0407_CollagenSupremeMask_nukki04.jpg?v=1747966296&width=713" },
+            { id: 14, brand: "OOTD", name: "Ceramide Care Mask", concerns: ["deshidratada", "sensible", "arrugas"], ingredients: ["ceramidas"], keyIngredient: "Triple Ceramida + Péptidos", keyIngredientEn: "Triple Ceramide + Peptides", image: "https://d1flfk77wl2xk4.cloudfront.net/Assets/11/409/XXL_p0203040911.jpg" },
+            { id: 15, brand: "OOTD", name: "Cica Soothing Mask", concerns: ["enrojecimiento", "sensible", "acne"], ingredients: ["centella"], keyIngredient: "Complejo Cica + Pantenol", keyIngredientEn: "Cica Complex + Panthenol", image: "https://d1flfk77wl2xk4.cloudfront.net/Assets/25/023/XXL_p0213802325.jpg" },
+            { id: 16, brand: "OOTD", name: "Triple Hyaluron Serum Glowing Mask", concerns: ["deshidratada", "pigmentacion", "arrugas"], ingredients: ["hialuronico"], keyIngredient: "Triple Ác. Hialurónico + Vitamina C", keyIngredientEn: "Triple Hyaluronic + Vitamin C", image: "https://hmartus.vtexassets.com/arquivos/ids/175698-1200-auto?v=638979559268970000&width=1200&height=auto&aspect=true" },
+            { id: 17, brand: "SKIN1004", name: "Madagascar Centella Hyalu-Cica First Ampoule", concerns: ["deshidratada", "sensible", "enrojecimiento"], ingredients: ["hialuronico", "centella"], keyIngredient: "Fórmula Hyalu-Cica + Gardenia", keyIngredientEn: "Hyalu-Cica Formula + Gardenia", image: "https://http2.mlstatic.com/D_NQ_NP_2X_881233-MLC91971195874_092025-F.webp" },
+            { id: 18, brand: "SKIN1004", name: "Madagascar Centella Poremizing Quick Clay Stick Mask", concerns: ["acne", "sensible", "enrojecimiento"], ingredients: ["centella", "arcilla"], keyIngredient: "Sal Rosa del Himalaya + Centella", keyIngredientEn: "Himalayan Pink Salt + Centella", image: "https://yeppo.cl/cdn/shop/files/SKIN1004-021-1_695x695.jpg?v=1750358638" },
+            { id: 19, brand: "SNP", name: "Peptaronic Serum", concerns: ["deshidratada", "arrugas"], ingredients: ["peptidos"], keyIngredient: "6 Péptidos + 5 Tipos de Hialurónico", keyIngredientEn: "6 Peptides + 5 Hyaluronic Types", image: "https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/snp/snp64788/g/59.jpg" },
+            { id: 20, brand: "SNP", name: "Peptaronic Cream", concerns: ["deshidratada", "arrugas"], ingredients: ["peptidos"], keyIngredient: "6 Péptidos + 5 Tipos de Hialurónico", keyIngredientEn: "6 Peptides + 5 Hyaluronic Types", image: "https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/snp/snp64789/y/11.jpg" },
+            { id: 21, brand: "SNP", name: "Peptaronic Eye Cream", concerns: ["arrugas", "deshidratada"], ingredients: ["peptidos"], keyIngredient: "6 Péptidos + 5 Tipos de Hialurónico", keyIngredientEn: "6 Peptides + 5 Hyaluronic Types", image: "https://www.sasa.com/cdn/shop/files/110013204002-2.jpg?v=1728638996&width=990" },
+            { id: 22, brand: "The Saem", name: "Healing Tea Garden Cleansing Water (Tea Tree)", concerns: ["acne", "enrojecimiento", "sensible"], ingredients: ["tea tree"], keyIngredient: "Extracto de Árbol de Té Australiano", keyIngredientEn: "Australian Tea Tree Extract", image: "https://www.japandostavka.ru/img/600/600/UserFiles/Image/img42899_31891.jpg" },
+            { id: 23, brand: "VT Cosmetics", name: "PDRN Hyaluronic Mint Micro Bubble Serum", concerns: ["arrugas", "deshidratada", "enrojecimiento"], ingredients: ["hialuronico"], keyIngredient: "Phyto-PDRN + Hialurónico", keyIngredientEn: "Phyto-PDRN + Hyaluronic", image: "https://http2.mlstatic.com/D_NQ_NP_2X_901315-MLC95242872289_102025-F.webp" }
+        ];
+
+        /* --- LÓGICA DE NEGOCIO --- */
+        const grid = document.getElementById('resultsGrid');
+        const concernCards = document.querySelectorAll('.concern-card');
+        const brandsContainer = document.getElementById('brandsContainer');
+        const langToggle = document.getElementById('langToggle');
+
+        let activeConcern = 'deshidratada';
+        let selectedBrands = new Set();
+
+        function init() {
+            // Inicializar textos
+            updateLanguageTexts();
+            renderBrandFilters(); 
+            renderProducts();
+            
+            // Listener Toggle Idioma
+            langToggle.addEventListener('click', () => {
+                currentLang = currentLang === 'es' ? 'en' : 'es';
+                
+                // Actualizar clases visuales
+                langToggle.classList.remove('es', 'en');
+                langToggle.classList.add(currentLang);
+                
+                // Actualizar textos y re-renderizar
+                updateLanguageTexts();
+                renderBrandFilters(); // Re-renderizar marcas para cambiar "Todas" / "All"
+                refreshGrid();
+            });
+
+            // Listeners de Necesidades
+            concernCards.forEach(card => {
+                card.addEventListener('click', (e) => {
+                    const target = e.currentTarget;
+                    const isAlreadyActive = target.classList.contains('active');
+                    
+                    concernCards.forEach(c => c.classList.remove('active'));
+
+                    if (isAlreadyActive) {
+                        activeConcern = 'todos'; 
+                    } else {
+                        target.classList.add('active');
+                        activeConcern = target.dataset.concern;
+                    }
+                    refreshGrid();
+                });
+            });
+        }
+
+        // Función para actualizar textos estáticos del UI
+        function updateLanguageTexts() {
+            // Cards de Necesidades
+            document.getElementById('lbl-deshidratada').innerText = translations[currentLang].concerns.deshidratada;
+            document.getElementById('lbl-arrugas').innerText = translations[currentLang].concerns.arrugas;
+            document.getElementById('lbl-enrojecimiento').innerText = translations[currentLang].concerns.enrojecimiento;
+            document.getElementById('lbl-acne').innerText = translations[currentLang].concerns.acne;
+            document.getElementById('lbl-sensible').innerText = translations[currentLang].concerns.sensible;
+            document.getElementById('lbl-pigmentacion').innerText = translations[currentLang].concerns.pigmentacion;
+
+            // Etiquetas Generales
+            document.getElementById('lbl-brands').innerText = translations[currentLang].ui.brands;
+        }
+
+        function renderBrandFilters() {
+            const uniqueBrands = [...new Set(productsDB.map(p => p.brand))].sort((a, b) => a.localeCompare(b));
+            
+            // Limpiar contenedores excepto el label
+            const label = brandsContainer.querySelector('.filter-label');
+            brandsContainer.innerHTML = '';
+            brandsContainer.appendChild(label);
+
+            // Botón Todas/All
+            const allBtn = document.createElement('button');
+            allBtn.className = 'brand-btn active'; 
+            allBtn.innerText = translations[currentLang].ui.all; // TRADUCCION AQUI
+            allBtn.id = 'btn-all-brands';
+            allBtn.addEventListener('click', () => {
+                selectedBrands.clear();
+                updateBrandVisuals();
+                refreshGrid();
+            });
+            brandsContainer.appendChild(allBtn);
+
+            // Botones de Marca (Estos no se traducen, son nombres propios)
+            uniqueBrands.forEach(brand => {
+                const btn = document.createElement('button');
+                btn.className = 'brand-btn';
+                btn.innerText = brand;
+                btn.dataset.brand = brand;
+                
+                btn.addEventListener('click', (e) => {
+                    const target = e.currentTarget;
+                    const brandName = target.dataset.brand;
+
+                    if (selectedBrands.has(brandName)) {
+                        selectedBrands.delete(brandName);
+                    } else {
+                        selectedBrands.add(brandName);
+                    }
+                    
+                    updateBrandVisuals();
+                    refreshGrid();
+                });
+
+                // Restaurar estado visual si estaba seleccionado antes de cambiar idioma
+                if(selectedBrands.has(brand)) {
+                    // Esperar al updateBrandVisuals o hacerlo manual aqui, 
+                    // pero updateBrandVisuals lo maneja bien al final
+                }
+                brandsContainer.appendChild(btn);
+            });
+            updateBrandVisuals();
+        }
+
+        function updateBrandVisuals() {
+            const allBtn = document.getElementById('btn-all-brands');
+            const brandBtns = document.querySelectorAll('.brand-btn[data-brand]');
+
+            if (selectedBrands.size === 0) {
+                allBtn.classList.add('active');
+                brandBtns.forEach(b => b.classList.remove('active'));
+            } else {
+                allBtn.classList.remove('active');
+                brandBtns.forEach(b => {
+                    if (selectedBrands.has(b.dataset.brand)) {
+                        b.classList.add('active');
+                    } else {
+                        b.classList.remove('active');
+                    }
+                });
+            }
+        }
+
+        function refreshGrid() {
+            grid.style.opacity = '0';
+            setTimeout(() => { renderProducts(); grid.style.opacity = '1'; }, 150);
+        }
+
+        function renderProducts() {
+            const filtered = productsDB.filter(product => {
+                const matchConcern = (activeConcern === 'todos') || product.concerns.includes(activeConcern);
+                const matchBrand = (selectedBrands.size === 0) || selectedBrands.has(product.brand);
+                return matchConcern && matchBrand;
+            });
+
+            grid.innerHTML = '';
+            
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="empty-state">${translations[currentLang].ui.empty}</div>`;
+                return;
+            }
+
+            filtered.forEach(p => {
+                // Lógica para elegir el ingrediente en el idioma correcto
+                // Si existe keyIngredientEn y el idioma es 'en', usalo. Si no, usa el default.
+                let ingredientText = p.keyIngredient;
+                if (currentLang === 'en' && p.keyIngredientEn) {
+                    ingredientText = p.keyIngredientEn;
+                }
+
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    <div class="img-container"><img src="${p.image}" class="product-img"></div>
+                    <div class="brand-name">${p.brand}</div>
+                    <h3 class="product-name">${p.name}</h3>
+                    <div class="key-ingredient">${ingredientText}</div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        init();
+    </script>
+</body>
+</html>
