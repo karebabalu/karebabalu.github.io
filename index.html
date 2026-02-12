@@ -2,75 +2,126 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advisor Tool - Multi Language</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>K-Beauty Advisor Tool</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
     
     <style>
-        /* --- ESTÉTICA OPERATIVA --- */
+        /* ============================================
+           DESIGN TOKENS & VARIABLES
+           ============================================ */
         :root {
-            --color-black: #222;
+            --color-black: #1a1a1a;
             --color-selected: #000;
             --color-text: #333;
             --color-gold: #c6a87c;
-            --color-bg: #ffffff;
-            --color-light-grey: #f4f4f4;
-            --font-sans: 'Lato', sans-serif;
-            --font-serif: 'Playfair Display', serif;
+            --color-gold-light: #e8dcc8;
+            --color-bg: #fafafa;
+            --color-light-grey: #f0f0f0;
+            --color-white: #ffffff;
+            --color-overlay: rgba(0, 0, 0, 0.5);
+            --glass-bg: rgba(255, 255, 255, 0.95);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --shadow-medium: 0 8px 32px rgba(0, 0, 0, 0.12);
+            --shadow-strong: 0 20px 60px rgba(0, 0, 0, 0.2);
+            --font-sans: 'Lato', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-serif: 'Playfair Display', Georgia, serif;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --transition-fast: 0.2s ease;
+            --transition-medium: 0.3s ease;
+            --transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        /* ============================================
+           RESET & BASE STYLES
+           ============================================ */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            font-size: 16px;
+            -webkit-text-size-adjust: 100%;
+        }
 
         body {
             font-family: var(--font-sans);
             background-color: var(--color-bg);
             color: var(--color-text);
             line-height: 1.6;
-            padding-top: 20px;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
+        /* ============================================
+           HEADER & LANGUAGE TOGGLE
+           ============================================ */
         header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: linear-gradient(180deg, var(--color-bg) 80%, transparent);
+            padding: 16px 20px;
+        }
+
+        .header-content {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 0 20px 20px 20px;
             display: flex;
-            justify-content: flex-end; /* Alinear toggle a la derecha */
+            justify-content: space-between;
+            align-items: center;
         }
 
-        main {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 20px 20px 20px;
+        .app-title {
+            font-family: var(--font-serif);
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--color-black);
+            letter-spacing: -0.02em;
         }
 
-        /* --- TOGGLE DE IDIOMA CREATIVO --- */
+        .app-title span {
+            color: var(--color-gold);
+        }
+
+        /* Language Toggle */
         .lang-switch {
             position: relative;
             display: inline-flex;
-            background: #eee;
+            background: var(--color-light-grey);
             border-radius: 30px;
             padding: 4px;
             cursor: pointer;
             user-select: none;
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+            min-height: 44px;
+            align-items: center;
         }
 
         .lang-option {
-            padding: 6px 16px;
-            font-size: 0.75rem;
+            padding: 8px 18px;
+            font-size: 0.8rem;
             font-weight: 700;
             z-index: 2;
             color: #888;
-            transition: color 0.3s;
+            transition: color var(--transition-medium);
             text-transform: uppercase;
             position: relative;
+            letter-spacing: 0.05em;
         }
 
         .lang-switch.es .opt-es { color: white; }
         .lang-switch.en .opt-en { color: white; }
 
-        /* La "burbuja" deslizante */
         .switch-bg {
             position: absolute;
             top: 4px;
@@ -79,182 +130,780 @@
             height: calc(100% - 8px);
             background: var(--color-black);
             border-radius: 20px;
-            transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+            transition: transform var(--transition-medium) cubic-bezier(0.4, 0.0, 0.2, 1);
             z-index: 1;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
 
         .lang-switch.en .switch-bg {
             transform: translateX(100%);
-            left: 2px; /* Ajuste fino */
+            left: 2px;
         }
 
+        /* ============================================
+           MAIN LAYOUT
+           ============================================ */
+        main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 16px 40px;
+        }
 
-        /* --- 1. BOTONES DE NECESIDAD --- */
+        @media (min-width: 768px) {
+            main {
+                padding: 0 24px 60px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            main {
+                padding: 0 32px 80px;
+            }
+        }
+
+        /* ============================================
+           SECTION: CONCERNS GRID
+           ============================================ */
+        .concerns-section {
+            margin-bottom: 24px;
+        }
+
+        .section-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: #999;
+            margin-bottom: 12px;
+            padding-left: 4px;
+        }
+
         .concerns-grid-nav {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 12px;
-            margin-bottom: 25px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        @media (min-width: 480px) {
+            .concerns-grid-nav {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (min-width: 768px) {
+            .concerns-grid-nav {
+                grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+                gap: 12px;
+            }
         }
 
         .concern-card {
-            background: white;
-            border: 1px solid #ddd;
-            padding: 15px 10px;
+            background: var(--color-white);
+            border: 1.5px solid #e5e5e5;
+            padding: 16px 12px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all var(--transition-medium);
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 80px;
-            border-radius: 6px;
+            min-height: 72px;
+            border-radius: var(--radius-md);
             user-select: none;
+            touch-action: manipulation;
+        }
+
+        @media (min-width: 768px) {
+            .concern-card {
+                min-height: 80px;
+                padding: 18px 14px;
+            }
         }
 
         .concern-card span {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.06em;
             font-weight: 700;
-            color: #555;
-            pointer-events: none; /* Evita clicks en el texto */
+            color: #666;
+            pointer-events: none;
+            line-height: 1.4;
         }
 
-        .concern-card:hover { border-color: #bbb; }
-        
+        .concern-card:hover {
+            border-color: #ccc;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .concern-card:active {
+            transform: scale(0.98);
+        }
+
         .concern-card.active {
-            background-color: var(--color-selected);
-            border-color: var(--color-selected);
-            color: white;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            background: linear-gradient(135deg, var(--color-black) 0%, #333 100%);
+            border-color: var(--color-black);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
         }
-        
-        .concern-card.active span { color: white; }
 
+        .concern-card.active span {
+            color: white;
+        }
 
-        /* --- 2. BARRA DE MARCAS --- */
+        /* ============================================
+           SECTION: BRANDS FILTER BAR
+           ============================================ */
+        .brands-section {
+            margin-bottom: 32px;
+        }
+
         .brands-container {
-            background-color: var(--color-light-grey);
-            padding: 15px 20px;
-            border-radius: 8px;
+            background: var(--color-white);
+            padding: 14px 16px;
+            border-radius: var(--radius-lg);
             display: flex;
             align-items: center;
-            justify-content: flex-start;
             gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 40px;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid #f0f0f0;
+        }
+
+        .brands-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        @media (min-width: 768px) {
+            .brands-container {
+                flex-wrap: wrap;
+                padding: 16px 20px;
+            }
         }
 
         .filter-label {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 700;
             text-transform: uppercase;
-            color: #999;
-            margin-right: 5px;
-            min-width: 60px;
+            color: #aaa;
+            margin-right: 4px;
+            flex-shrink: 0;
+            letter-spacing: 0.08em;
         }
 
         .brand-btn {
-            background: #ffffff;
-            border: 1px solid #ddd;
-            padding: 8px 16px;
-            border-radius: 6px; 
-            font-size: 0.85rem;
-            color: #555;
+            background: var(--color-light-grey);
+            border: none;
+            padding: 10px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: #666;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all var(--transition-medium);
             user-select: none;
             text-transform: uppercase;
             font-weight: 600;
+            letter-spacing: 0.03em;
+            flex-shrink: 0;
+            min-height: 40px;
+            touch-action: manipulation;
         }
-        
-        .brand-btn:hover { border-color: #999; color: #333; }
-        
+
+        .brand-btn:hover {
+            background: #e5e5e5;
+            color: #444;
+        }
+
+        .brand-btn:active {
+            transform: scale(0.95);
+        }
+
         .brand-btn.active {
-            background-color: var(--color-black);
+            background: var(--color-black);
             color: white;
-            border-color: var(--color-black);
+            box-shadow: 0 3px 12px rgba(0,0,0,0.2);
         }
 
+        /* ============================================
+           SECTION: PRODUCTS GRID
+           ============================================ */
+        .products-section {
+            position: relative;
+        }
 
-        /* --- 3. GRID RESULTADOS --- */
         .products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        @media (min-width: 480px) {
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+        }
+
+        @media (min-width: 640px) {
+            .products-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+                gap: 28px;
+            }
         }
 
         .product-card {
             background: transparent;
             text-align: center;
             cursor: pointer;
-            animation: fadeIn 0.4s ease forwards;
+            animation: fadeInUp 0.5s ease forwards;
+            border-radius: var(--radius-md);
+            transition: transform var(--transition-medium);
+            touch-action: manipulation;
         }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .product-card:active {
+            transform: scale(0.98);
+        }
 
         .img-container {
             position: relative;
-            background-color: #fff;
+            background: var(--color-white);
             border: 1px solid #eee;
-            height: 300px;
+            aspect-ratio: 1;
             display: flex;
             align-items: center;
             justify-content: center;
             margin-bottom: 12px;
-            border-radius: 6px;
-            transition: border-color 0.3s;
+            border-radius: var(--radius-md);
+            transition: all var(--transition-medium);
+            overflow: hidden;
+            box-shadow: var(--shadow-soft);
         }
-        
-        .product-card:hover .img-container { border-color: var(--color-gold); }
-        .product-img { max-height: 80%; max-width: 80%; object-fit: contain; }
 
-        .brand-name { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; color: #aaa; margin-bottom: 4px; }
-        .product-name { font-family: var(--font-serif); font-size: 1.1rem; font-weight: 400; color: var(--color-black); margin-bottom: 6px; }
-        .key-ingredient { display: inline-block; font-size: 0.7rem; border-bottom: 1px solid #ddd; padding-bottom: 1px; color: #666; }
-        
-        .empty-state { 
-            grid-column: 1 / -1; 
-            padding: 40px; 
-            text-align: center; 
-            color: #bbb; 
+        .product-card:hover .img-container {
+            border-color: var(--color-gold);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        }
+
+        .product-img {
+            max-height: 75%;
+            max-width: 75%;
+            object-fit: contain;
+            transition: transform var(--transition-medium);
+        }
+
+        .product-card:hover .product-img {
+            transform: scale(1.05);
+        }
+
+        .brand-name {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: #aaa;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .product-name {
+            font-family: var(--font-serif);
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--color-black);
+            margin-bottom: 8px;
+            line-height: 1.35;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            min-height: 2.7em;
+        }
+
+        @media (min-width: 768px) {
+            .product-name {
+                font-size: 1.05rem;
+            }
+        }
+
+        .key-ingredient {
+            display: inline-block;
+            font-size: 0.7rem;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 2px;
+            color: #777;
+            font-weight: 500;
+        }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            padding: 48px 24px;
+            text-align: center;
+            color: #bbb;
             font-style: italic;
-            border: 2px dashed #eee;
-            border-radius: 10px;
+            border: 2px dashed #e5e5e5;
+            border-radius: var(--radius-lg);
+            background: var(--color-white);
         }
 
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        /* ============================================
+           GLASSMORPHISM MODAL
+           ============================================ */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity var(--transition-medium), visibility var(--transition-medium);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-container {
+            width: 100%;
+            max-width: 520px;
+            max-height: 90vh;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-strong), 0 0 0 1px rgba(255,255,255,0.3) inset;
+            overflow: hidden;
+            transform: scale(0.9) translateY(20px);
+            opacity: 0;
+            transition: transform var(--transition-slow), opacity var(--transition-slow);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-overlay.active .modal-container {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+        }
+
+        /* Modal Header */
+        .modal-header {
+            position: relative;
+            padding: 20px 24px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+        }
+
+        .modal-brand {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--color-gold);
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .modal-title {
+            font-family: var(--font-serif);
+            font-size: 1.35rem;
+            font-weight: 600;
+            color: var(--color-black);
+            line-height: 1.3;
+            padding-right: 40px;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(0,0,0,0.05);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-medium);
+            font-size: 1.5rem;
+            color: #666;
+            touch-action: manipulation;
+        }
+
+        .modal-close:hover {
+            background: rgba(0,0,0,0.1);
+            color: var(--color-black);
+        }
+
+        .modal-close:active {
+            transform: scale(0.92);
+        }
+
+        /* Modal Content */
+        .modal-content {
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            flex: 1;
+        }
+
+        .modal-image-section {
+            background: var(--color-white);
+            padding: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid rgba(0,0,0,0.04);
+        }
+
+        .modal-image {
+            max-height: 220px;
+            max-width: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 10px 30px rgba(0,0,0,0.1));
+        }
+
+        .modal-details {
+            padding: 24px;
+        }
+
+        /* Description Block */
+        .modal-description-text {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #555;
+            font-family: var(--font-serif);
+            margin-bottom: 8px;
+        }
+
+        /* Key Ingredient Badge */
+        .ingredient-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, var(--color-gold-light) 0%, #f5efe6 100%);
+            padding: 10px 16px;
+            border-radius: 30px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(198, 168, 124, 0.3);
+        }
+
+        .ingredient-icon {
+            font-size: 1.1rem;
+        }
+
+        .ingredient-text {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #8b7355;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Info Sections */
+        .info-section {
+            margin-bottom: 24px;
+        }
+
+        .info-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-title {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: #999;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-title-icon {
+            font-size: 1rem;
+        }
+
+        /* How to Use - Routine Steps */
+        .routine-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .routine-step {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: var(--color-white);
+            padding: 14px 16px;
+            border-radius: var(--radius-md);
+            border: 1px solid #f0f0f0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+
+        .step-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--color-gold-light) 0%, #fff 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+            border: 1px solid rgba(198, 168, 124, 0.2);
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 2px;
+        }
+
+        .step-value {
+            font-size: 0.95rem;
+            color: var(--color-black);
+            font-weight: 500;
+        }
+
+        /* Texture Section */
+        .texture-card {
+            background: var(--color-white);
+            padding: 18px;
+            border-radius: var(--radius-md);
+            border: 1px solid #f0f0f0;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+
+        .texture-icon {
+            font-size: 1.8rem;
+            line-height: 1;
+        }
+
+        .texture-content {
+            flex: 1;
+        }
+
+        .texture-name {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--color-black);
+            margin-bottom: 4px;
+        }
+
+        .texture-desc {
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        /* Benefits Tags */
+        .benefits-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .benefit-tag {
+            background: var(--color-light-grey);
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: #555;
+            font-weight: 500;
+        }
+
+        /* Modal Footer - CTA */
+        .modal-footer {
+            padding: 16px 24px 24px;
+            border-top: 1px solid rgba(0,0,0,0.06);
+        }
+
+        .cta-button {
+            width: 100%;
+            padding: 16px 24px;
+            background: linear-gradient(135deg, var(--color-black) 0%, #333 100%);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            cursor: pointer;
+            transition: all var(--transition-medium);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+            touch-action: manipulation;
+            min-height: 52px;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+        }
+
+        .cta-button:active {
+            transform: translateY(0);
+        }
+
+        /* ============================================
+           RESPONSIVE ADJUSTMENTS
+           ============================================ */
+        @media (max-width: 380px) {
+            .modal-title {
+                font-size: 1.15rem;
+            }
+
+            .modal-details {
+                padding: 20px;
+            }
+
+            .routine-step {
+                padding: 12px 14px;
+            }
+
+            .step-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1.1rem;
+            }
+        }
+        
+        @media (min-width: 1024px) and (orientation: landscape) {
+            .modal-container {
+                max-width: 600px;
+            }
+
+            .modal-image {
+                max-height: 260px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="lang-switch es" id="langToggle">
-            <div class="switch-bg"></div>
-            <div class="lang-option opt-es">Español</div>
-            <div class="lang-option opt-en">English</div>
+        <div class="header-content">
+            <h1 class="app-title">K-Beauty <span>Advisor</span></h1>
+            <div class="lang-switch es" id="langToggle">
+                <div class="switch-bg"></div>
+                <div class="lang-option opt-es">Español</div>
+                <div class="lang-option opt-en">English</div>
+            </div>
         </div>
     </header>
 
     <main>
-        <div class="concerns-grid-nav">
-            <div class="concern-card active" data-concern="deshidratada"><span id="lbl-deshidratada"></span></div>
-            <div class="concern-card" data-concern="arrugas"><span id="lbl-arrugas"></span></div>
-            <div class="concern-card" data-concern="enrojecimiento"><span id="lbl-enrojecimiento"></span></div>
-            <div class="concern-card" data-concern="acne"><span id="lbl-acne"></span></div>
-            <div class="concern-card" data-concern="sensible"><span id="lbl-sensible"></span></div>
-            <div class="concern-card" data-concern="pigmentacion"><span id="lbl-pigmentacion"></span></div>
-        </div>
-
-        <div class="brands-container" id="brandsContainer">
-            <span class="filter-label" id="lbl-brands">Marcas:</span>
+        <section class="concerns-section">
+            <p class="section-label" id="lbl-concerns-section">Selecciona una preocupación</p>
+            <div class="concerns-grid-nav">
+                <div class="concern-card active" data-concern="deshidratada"><span id="lbl-deshidratada"></span></div>
+                <div class="concern-card" data-concern="arrugas"><span id="lbl-arrugas"></span></div>
+                <div class="concern-card" data-concern="enrojecimiento"><span id="lbl-enrojecimiento"></span></div>
+                <div class="concern-card" data-concern="acne"><span id="lbl-acne"></span></div>
+                <div class="concern-card" data-concern="sensible"><span id="lbl-sensible"></span></div>
+                <div class="concern-card" data-concern="pigmentacion"><span id="lbl-pigmentacion"></span></div>
             </div>
+        </section>
 
-        <div class="products-grid" id="resultsGrid"></div>
+        <section class="brands-section">
+            <p class="section-label" id="lbl-brands-section">Filtrar por marca</p>
+            <div class="brands-container" id="brandsContainer">
+                <span class="filter-label" id="lbl-brands">Marcas:</span>
+            </div>
+        </section>
+
+        <section class="products-section">
+            <div class="products-grid" id="resultsGrid"></div>
+        </section>
     </main>
 
+    <div class="modal-overlay" id="productModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <div>
+                    <p class="modal-brand" id="modalBrand"></p>
+                    <h2 class="modal-title" id="modalTitle"></h2>
+                </div>
+                <button class="modal-close" id="modalClose" aria-label="Cerrar">&times;</button>
+            </div>
+            
+            <div class="modal-content">
+                <div class="modal-image-section">
+                    <img class="modal-image" id="modalImage" src="" alt="">
+                </div>
+                
+                <div class="modal-details" id="modalDetailsContainer">
+                    </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="cta-button" id="modalCta">Añadir a la Consulta</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        /* --- DICCIONARIO DE TRADUCCIÓN --- */
+        /* ============================================
+           TRANSLATIONS
+           ============================================ */
         const translations = {
             es: {
                 concerns: {
@@ -266,9 +915,35 @@
                     pigmentacion: "Pigmentación"
                 },
                 ui: {
+                    concernsSection: "Selecciona una preocupación",
+                    brandsSection: "Filtrar por marca",
                     brands: "Marcas:",
                     all: "Todas",
-                    empty: "No hay productos con estos filtros."
+                    empty: "No hay productos con estos filtros.",
+                    description: "Descripción",
+                    howToUse: "Cómo Usar",
+                    texture: "Textura",
+                    benefits: "Beneficios Clave",
+                    ctaButton: "Añadir a la Consulta"
+                },
+                routine: {
+                    when: "Cuándo",
+                    amount: "Cantidad",
+                    order: "Orden",
+                    morning: "Mañana",
+                    night: "Noche",
+                    both: "Mañana y Noche",
+                    afterCleansing: "Después de limpiar",
+                    beforeMoisturizer: "Antes de hidratante",
+                    lastStep: "Último paso"
+                },
+                texture: {
+                    lightweight: "Ligera y fresca",
+                    rich: "Rica y nutritiva",
+                    gel: "Gel hidratante",
+                    creamy: "Cremosa suave",
+                    watery: "Acuosa esencial",
+                    serum: "Seda líquida"
                 }
             },
             en: {
@@ -281,116 +956,659 @@
                     pigmentacion: "Pigmentation"
                 },
                 ui: {
+                    concernsSection: "Select a skin concern",
+                    brandsSection: "Filter by brand",
                     brands: "Brands:",
                     all: "All",
-                    empty: "No products match these filters."
+                    empty: "No products match these filters.",
+                    description: "Description",
+                    howToUse: "How to Use",
+                    texture: "Texture & Feel",
+                    benefits: "Key Benefits",
+                    ctaButton: "Add to Consultation"
+                },
+                routine: {
+                    when: "When",
+                    amount: "Amount",
+                    order: "Order",
+                    morning: "Morning",
+                    night: "Night",
+                    both: "AM & PM",
+                    afterCleansing: "After cleansing",
+                    beforeMoisturizer: "Before moisturizer",
+                    lastStep: "Final step"
+                },
+                texture: {
+                    lightweight: "Lightweight & fresh",
+                    rich: "Rich & nourishing",
+                    gel: "Hydrating gel",
+                    creamy: "Soft & creamy",
+                    watery: "Watery essence",
+                    serum: "Silky liquid"
                 }
             }
         };
 
         let currentLang = 'es';
 
-        /* --- DATOS (Agregué keyIngredientEn opcional para mostrar capacidad) --- */
+        /* ============================================
+           ENHANCED PRODUCTS DATABASE (With Descriptions)
+           ============================================ */
         const productsDB = [
-            { id: 1, brand: "Esfolío", name: "Super Rich Coconut Waterfull Cream", concerns: ["sequedad", "deshidratada", "arrugas", "sensible"], ingredients: ["coco"], keyIngredient: "Aceite de Coco", keyIngredientEn: "Coconut Oil", image: "https://incidecoder-content.storage.googleapis.com/a1dd19d9-7a4a-4ea8-b729-b2185ef48937/products/esfolio-super-rich-coconut-perfecting-cream/esfolio-super-rich-coconut-perfecting-cream_front_photo_300x300@1x.webp"},
-            { id: 2, brand: "Mixsoon", name: "Daily Mask Saturday: Moisture", concerns: ["deshidratada", "sensible"], ingredients: ["hialuronico"], keyIngredient: "Complejo de Ác. Hialurónico", keyIngredientEn: "Hyaluronic Acid Complex", image: "https://mixsoon.us/cdn/shop/files/2_5fb93c6b-9b0e-4040-9c90-fe750c52b1d1.jpg?v=1739930372&width=1200" },
-            { id: 3, brand: "Mixsoon", name: "Daily Mask Friday: Brightening", concerns: ["pigmentacion", "deshidratada"], ingredients: ["niacinamida"], keyIngredient: "Extracto de Espino Amarillo", keyIngredientEn: "Sea Buckthorn Extract", image: "https://mixsoon.us/cdn/shop/files/2_200f258e-3441-48d7-ac2d-7e437fbec01a.jpg?v=1739930372&width=1200" },
-            { id: 4, brand: "Mixsoon", name: "Daily Mask Sunday: Total Care", concerns: ["arrugas", "deshidratada"], ingredients: ["ginseng"], keyIngredient: "Extracto de Ginseng", keyIngredientEn: "Ginseng Extract", image: "https://mixsoon.us/cdn/shop/files/2_2da86c4a-6a29-4e65-84da-6305460504b9.jpg?v=1739930372&width=1200" },
-            { id: 5, brand: "SKIN1004", name: "Madagascar Centella Hyalu-Cica Water-Fit Sun Serum", concerns: ["deshidratada", "sensible", "enrojecimiento"], ingredients: ["hialuronico", "centella"], keyIngredient: "Fórmula Hyalu-Cica", keyIngredientEn: "Hyalu-Cica Formula", image: "https://www.skin1004.com/cdn/shop/files/skin1004-50ml-hyalu-cica-water-fit-sun-serum-uv-1204112543_1440x.png?v=1762764544" },
-            { id: 6, brand: "Centellian24", name: "The Madeca Cream Time Reverse", concerns: ["arrugas", "pigmentacion", "deshidratada", "sensible"], ingredients: ["centella"], keyIngredient: "Active-TECA™ (Centella)", keyIngredientEn: "Active-TECA™ (Centella)", image: "https://www.koreanbeauty.co.uk/cdn/shop/files/MadecaCreamTimeReverse.png?v=1768229841&width=1800" },
-            { id: 7, brand: "Centellian24", name: "Madeca Derma Mask III Intensive Formula", concerns: ["arrugas", "sensible", "deshidratada", "enrojecimiento"], ingredients: ["centella"], keyIngredient: "TECA (Centella Asiatica)", keyIngredientEn: "TECA (Centella Asiatica)", image: "https://pinkstorecosmeticos.com/wp-content/uploads/2025/10/1.webp" },
-            { id: 8, brand: "Centellian24", name: "Madeca Lab PDRN Skin Tightening Glow Gel Mask", concerns: ["arrugas", "pigmentacion", "deshidratada"], ingredients: ["centella"], keyIngredient: "PDRN (ADN de Salmón)", keyIngredientEn: "PDRN (Salmon DNA)", image: "https://madeca.com/cdn/shop/files/PDRN_MASK_28327d8f-ab47-479d-a68d-67194e5b245c.png?v=1766532146&width=2000" },
-            { id: 9, brand: "Centellian24", name: "Madeca Cleansing Foam (Amino Acid)", concerns: ["sensible", "deshidratada", "enrojecimiento"], ingredients: ["centella"], keyIngredient: "TECA + Complejo de Aminoácidos", keyIngredientEn: "TECA + Amino Acid Complex", image: "https://prod.skin-seoul.com/wp-content/uploads/2024/05/thu_100005405_1-1.webp" },
-            { id: 10, brand: "Dr. Althea", name: "345 Relief Cream", concerns: ["acne", "pigmentacion", "enrojecimiento", "sensible"], ingredients: ["niacinamida"], keyIngredient: "Resveratrol + Pantenol", keyIngredientEn: "Resveratrol + Panthenol", image: "https://cdnx.jumpseller.com/exposed-beauty/image/70391935/resize/640/640?1764890154" },
-            { id: 11, brand: "SEOUL 1988", name: "Eye Cream : Retinal Liposome 4% + Fermented Bean", concerns: ["arrugas", "pigmentacion", "deshidratada"], ingredients: ["retinal"], keyIngredient: "Retinal Liposoma 4%", keyIngredientEn: "Retinal Liposome 4%", image: "https://cdn2.surisuri.dk/uploads/products/seoul-1988-eye-cream-retinal-liposome-4-fermented-bean/_product/2081398/k-secret-seoul-1988-eye-cream-retinal-liposome-fermented-bean.webp" },
-            { id: 12, brand: "Muldream", name: "Vegan Green Mild CICA Ampoule", concerns: ["sensible", "enrojecimiento", "acne", "deshidratada"], ingredients: ["centella"], keyIngredient: "Houttuynia Cordata + Centella", keyIngredientEn: "Houttuynia Cordata + Centella", image: "https://thegoodskncompany.com/wp-content/uploads/2023/01/GOODSKN-MULDREAM-CICA-AMPOULE.webp" },
-            { id: 13, brand: "OOTD", name: "Collagen Supreme Mask", concerns: ["arrugas", "deshidratada", "sensible"], ingredients: ["hialuronico"], keyIngredient: "Colágeno Hidrolizado + Péptidos", keyIngredientEn: "Hydrolyzed Collagen + Peptides", image: "https://bellkor.cl/cdn/shop/files/NU0407_CollagenSupremeMask_nukki04.jpg?v=1747966296&width=713" },
-            { id: 14, brand: "OOTD", name: "Ceramide Care Mask", concerns: ["deshidratada", "sensible", "arrugas"], ingredients: ["ceramidas"], keyIngredient: "Triple Ceramida + Péptidos", keyIngredientEn: "Triple Ceramide + Peptides", image: "https://d1flfk77wl2xk4.cloudfront.net/Assets/11/409/XXL_p0203040911.jpg" },
-            { id: 15, brand: "OOTD", name: "Cica Soothing Mask", concerns: ["enrojecimiento", "sensible", "acne"], ingredients: ["centella"], keyIngredient: "Complejo Cica + Pantenol", keyIngredientEn: "Cica Complex + Panthenol", image: "https://d1flfk77wl2xk4.cloudfront.net/Assets/25/023/XXL_p0213802325.jpg" },
-            { id: 16, brand: "OOTD", name: "Triple Hyaluron Serum Glowing Mask", concerns: ["deshidratada", "pigmentacion", "arrugas"], ingredients: ["hialuronico"], keyIngredient: "Triple Ác. Hialurónico + Vitamina C", keyIngredientEn: "Triple Hyaluronic + Vitamin C", image: "https://hmartus.vtexassets.com/arquivos/ids/175698-1200-auto?v=638979559268970000&width=1200&height=auto&aspect=true" },
-            { id: 17, brand: "SKIN1004", name: "Madagascar Centella Hyalu-Cica First Ampoule", concerns: ["deshidratada", "sensible", "enrojecimiento"], ingredients: ["hialuronico", "centella"], keyIngredient: "Fórmula Hyalu-Cica + Gardenia", keyIngredientEn: "Hyalu-Cica Formula + Gardenia", image: "https://http2.mlstatic.com/D_NQ_NP_2X_881233-MLC91971195874_092025-F.webp" },
-            { id: 18, brand: "SKIN1004", name: "Madagascar Centella Poremizing Quick Clay Stick Mask", concerns: ["acne", "sensible", "enrojecimiento"], ingredients: ["centella", "arcilla"], keyIngredient: "Sal Rosa del Himalaya + Centella", keyIngredientEn: "Himalayan Pink Salt + Centella", image: "https://yeppo.cl/cdn/shop/files/SKIN1004-021-1_695x695.jpg?v=1750358638" },
-            { id: 19, brand: "SNP", name: "Peptaronic Serum", concerns: ["deshidratada", "arrugas"], ingredients: ["peptidos"], keyIngredient: "6 Péptidos + 5 Tipos de Hialurónico", keyIngredientEn: "6 Peptides + 5 Hyaluronic Types", image: "https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/snp/snp64788/g/59.jpg" },
-            { id: 20, brand: "SNP", name: "Peptaronic Cream", concerns: ["deshidratada", "arrugas"], ingredients: ["peptidos"], keyIngredient: "6 Péptidos + 5 Tipos de Hialurónico", keyIngredientEn: "6 Peptides + 5 Hyaluronic Types", image: "https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/snp/snp64789/y/11.jpg" },
-            { id: 21, brand: "SNP", name: "Peptaronic Eye Cream", concerns: ["arrugas", "deshidratada"], ingredients: ["peptidos"], keyIngredient: "6 Péptidos + 5 Tipos de Hialurónico", keyIngredientEn: "6 Peptides + 5 Hyaluronic Types", image: "https://www.sasa.com/cdn/shop/files/110013204002-2.jpg?v=1728638996&width=990" },
-            { id: 22, brand: "The Saem", name: "Healing Tea Garden Cleansing Water (Tea Tree)", concerns: ["acne", "enrojecimiento", "sensible"], ingredients: ["tea tree"], keyIngredient: "Extracto de Árbol de Té Australiano", keyIngredientEn: "Australian Tea Tree Extract", image: "https://www.japandostavka.ru/img/600/600/UserFiles/Image/img42899_31891.jpg" },
-            { id: 23, brand: "VT Cosmetics", name: "PDRN Hyaluronic Mint Micro Bubble Serum", concerns: ["arrugas", "deshidratada", "enrojecimiento"], ingredients: ["hialuronico"], keyIngredient: "Phyto-PDRN + Hialurónico", keyIngredientEn: "Phyto-PDRN + Hyaluronic", image: "https://http2.mlstatic.com/D_NQ_NP_2X_901315-MLC95242872289_102025-F.webp" }
+            {
+                id: 1,
+                brand: "Esfolío",
+                name: "Super Rich Coconut Waterfull Cream",
+                concerns: ["sequedad", "deshidratada", "arrugas", "sensible"],
+                ingredients: ["coco"],
+                keyIngredient: "Aceite de Coco",
+                keyIngredientEn: "Coconut Oil",
+                image: "https://incidecoder-content.storage.googleapis.com/a1dd19d9-7a4a-4ea8-b729-b2185ef48937/products/esfolio-super-rich-coconut-perfecting-cream/esfolio-super-rich-coconut-perfecting-cream_front_photo_300x300@1x.webp",
+                descriptionEs: "Una crema lujosa y profundamente hidratante infusionada con aceite de coco. Ideal para pieles muy secas, proporciona una barrera nutritiva que retiene la humedad durante toda la noche.",
+                descriptionEn: "A luxurious, deeply hydrating cream infused with coconut oil. Ideal for very dry skin, it provides a nourishing barrier that locks in moisture throughout the night.",
+                howToUse: {
+                    when: { icon: "🌙", value: "night" },
+                    amount: { icon: "🥥", value: "pearl" },
+                    order: { icon: "🔒", value: "last" }
+                },
+                texture: { type: "rich", icon: "🧈", descEs: "Textura rica tipo mantequilla que se funde en la piel", descEn: "Rich butter-like texture that melts into skin" },
+                benefits: ["Hidratación profunda", "Reparación nocturna", "Suavidad"]
+            },
+            {
+                id: 2,
+                brand: "Mixsoon",
+                name: "Daily Mask Saturday: Moisture",
+                concerns: ["deshidratada", "sensible"],
+                ingredients: ["hialuronico"],
+                keyIngredient: "Complejo de Ác. Hialurónico",
+                keyIngredientEn: "Hyaluronic Acid Complex",
+                image: "https://mixsoon.us/cdn/shop/files/2_5fb93c6b-9b0e-4040-9c90-fe750c52b1d1.jpg?v=1739930372&width=1200",
+                descriptionEs: "Mascarilla diaria ligera diseñada para reponer la humedad rápidamente. Su complejo de hialurónico penetra capas profundas para una piel jugosa.",
+                descriptionEn: "A lightweight daily mask designed to replenish moisture quickly. Its hyaluronic complex penetrates deep layers for dewy skin.",
+                howToUse: {
+                    when: { icon: "☀️", value: "morning" },
+                    amount: { icon: "💧", value: "oneMask" },
+                    order: { icon: "⏱️", value: "15min" }
+                },
+                texture: { type: "watery", icon: "💦", descEs: "Esencia acuosa abundante en la mascarilla", descEn: "Watery essence soaked in the sheet mask" },
+                benefits: ["Hidratación instantánea", "Calmante", "Refrescante"]
+            },
+            {
+                id: 3,
+                brand: "Mixsoon",
+                name: "Daily Mask Friday: Brightening",
+                concerns: ["pigmentacion", "deshidratada"],
+                ingredients: ["niacinamida"],
+                keyIngredient: "Extracto de Espino Amarillo",
+                keyIngredientEn: "Sea Buckthorn Extract",
+                image: "https://mixsoon.us/cdn/shop/files/2_200f258e-3441-48d7-ac2d-7e437fbec01a.jpg?v=1739930372&width=1200",
+                descriptionEs: "Revitaliza la piel apagada con esta mascarilla rica en vitaminas naturales. El espino amarillo ayuda a unificar el tono y aportar luminosidad.",
+                descriptionEn: "Revitalize dull skin with this mask rich in natural vitamins. Sea buckthorn helps even out skin tone and add radiance.",
+                howToUse: {
+                    when: { icon: "🌙", value: "night" },
+                    amount: { icon: "💧", value: "oneMask" },
+                    order: { icon: "⏱️", value: "20min" }
+                },
+                texture: { type: "watery", icon: "🍊", descEs: "Esencia ligera con vitamina C natural", descEn: "Light essence with natural vitamin C" },
+                benefits: ["Iluminación", "Vitamina C natural", "Antioxidante"]
+            },
+            {
+                id: 4,
+                brand: "Mixsoon",
+                name: "Daily Mask Sunday: Total Care",
+                concerns: ["arrugas", "deshidratada"],
+                ingredients: ["ginseng"],
+                keyIngredient: "Extracto de Ginseng",
+                keyIngredientEn: "Ginseng Extract",
+                image: "https://mixsoon.us/cdn/shop/files/2_2da86c4a-6a29-4e65-84da-6305460504b9.jpg?v=1739930372&width=1200",
+                descriptionEs: "El cuidado completo para finalizar la semana. El ginseng proporciona energía a la piel cansada y ayuda a mejorar la elasticidad.",
+                descriptionEn: "Total care to end the week. Ginseng provides energy to tired skin and helps improve elasticity.",
+                howToUse: {
+                    when: { icon: "🌙", value: "night" },
+                    amount: { icon: "💧", value: "oneMask" },
+                    order: { icon: "⏱️", value: "20min" }
+                },
+                texture: { type: "serum", icon: "🌿", descEs: "Esencia nutritiva tipo sérum tradicional", descEn: "Nutritive traditional serum-like essence" },
+                benefits: ["Anti-edad", "Reafirmante", "Energizante"]
+            },
+            {
+                id: 5,
+                brand: "SKIN1004",
+                name: "Madagascar Centella Hyalu-Cica Water-Fit Sun Serum",
+                concerns: ["deshidratada", "sensible", "enrojecimiento"],
+                ingredients: ["hialuronico", "centella"],
+                keyIngredient: "Fórmula Hyalu-Cica",
+                keyIngredientEn: "Hyalu-Cica Formula",
+                image: "https://www.skin1004.com/cdn/shop/files/skin1004-50ml-hyalu-cica-water-fit-sun-serum-uv-1204112543_1440x.png?v=1762764544",
+                descriptionEs: "Un protector solar revolucionario con textura de sérum hidratante. Protege contra los rayos UV mientras calma e hidrata sin dejar rastro blanco.",
+                descriptionEn: "A revolutionary sunscreen with a hydrating serum texture. Protects against UV rays while soothing and hydrating with no white cast.",
+                howToUse: {
+                    when: { icon: "☀️", value: "morning" },
+                    amount: { icon: "🤲", value: "twoFingers" },
+                    order: { icon: "🔒", value: "last" }
+                },
+                texture: { type: "lightweight", icon: "☁️", descEs: "Textura ligera tipo esencia que no deja residuo blanco", descEn: "Lightweight essence texture with no white cast" },
+                benefits: ["SPF 50+", "Hidratación", "Sin residuo blanco"]
+            },
+            {
+                id: 6,
+                brand: "Centellian24",
+                name: "The Madeca Cream Time Reverse",
+                concerns: ["arrugas", "pigmentacion", "deshidratada", "sensible"],
+                ingredients: ["centella"],
+                keyIngredient: "Active-TECA™ (Centella)",
+                keyIngredientEn: "Active-TECA™ (Centella)",
+                image: "https://www.koreanbeauty.co.uk/cdn/shop/files/MadecaCreamTimeReverse.png?v=1768229841&width=1800",
+                descriptionEs: "Potente crema antiedad con TECA concentrado. Ayuda a revertir los signos del tiempo, mejorando la densidad y luminosidad de la piel.",
+                descriptionEn: "Potent anti-aging cream with concentrated TECA. Helps reverse signs of aging, improving skin density and radiance.",
+                howToUse: {
+                    when: { icon: "🌙", value: "night" },
+                    amount: { icon: "🥥", value: "pearl" },
+                    order: { icon: "🔒", value: "last" }
+                },
+                texture: { type: "rich", icon: "🍦", descEs: "Crema densa tipo helado que se absorbe perfectamente", descEn: "Dense ice-cream-like cream that absorbs perfectly" },
+                benefits: ["Anti-edad avanzado", "Reparación", "Luminosidad"]
+            },
+            {
+                id: 7,
+                brand: "Centellian24",
+                name: "Madeca Derma Mask III Intensive Formula",
+                concerns: ["arrugas", "sensible", "deshidratada", "enrojecimiento"],
+                ingredients: ["centella"],
+                keyIngredient: "TECA (Centella Asiatica)",
+                keyIngredientEn: "TECA (Centella Asiatica)",
+                image: "https://pinkstorecosmeticos.com/wp-content/uploads/2025/10/1.webp",
+                descriptionEs: "Mascarilla de algodón puro empapada en una fórmula intensiva de centella. Calma la piel irritada y proporciona un tratamiento reparador profundo.",
+                descriptionEn: "Pure cotton mask soaked in an intensive centella formula. Soothes irritated skin and provides deep reparative treatment.",
+                howToUse: {
+                    when: { icon: "🌙", value: "night" },
+                    amount: { icon: "💧", value: "oneMask" },
+                    order: { icon: "⏱️", value: "20min" }
+                },
+                texture: { type: "serum", icon: "🌱", descEs: "Ampolla de sérum concentrado en mascarilla", descEn: "Concentrated serum ampoule in mask form" },
+                benefits: ["Reparación intensiva", "Calmante", "Anti-edad"]
+            },
+            {
+                id: 8,
+                brand: "Centellian24",
+                name: "Madeca Lab PDRN Skin Tightening Glow Gel Mask",
+                concerns: ["arrugas", "pigmentacion", "deshidratada"],
+                ingredients: ["centella"],
+                keyIngredient: "PDRN (ADN de Salmón)",
+                keyIngredientEn: "PDRN (Salmon DNA)",
+                image: "https://madeca.com/cdn/shop/files/PDRN_MASK_28327d8f-ab47-479d-a68d-67194e5b245c.png?v=1766532146&width=2000",
+                descriptionEs: "Mascarilla de hidrogel premium con PDRN. Se adhiere como una segunda piel para entregar ingredientes reafirmantes y dar un efecto 'glow'.",
+                descriptionEn: "Premium hydrogel mask with PDRN. Adheres like second skin to deliver tightening ingredients and give a glow effect.",
+                howToUse: {
+                    when: { icon: "🌙", value: "night" },
+                    amount: { icon: "💧", value: "oneMask" },
+                    order: { icon: "⏱️", value: "30min" }
+                },
+                texture: { type: "gel", icon: "🧊", descEs: "Gel refrescante que se adhiere perfectamente", descEn: "Refreshing gel that adheres perfectly" },
+                benefits: ["Reafirmante", "Luminosidad", "PDRN premium"]
+            },
+            {
+                id: 9,
+                brand: "Centellian24",
+                name: "Madeca Cleansing Foam (Amino Acid)",
+                concerns: ["sensible", "deshidratada", "enrojecimiento"],
+                ingredients: ["centella"],
+                keyIngredient: "TECA + Complejo de Aminoácidos",
+                keyIngredientEn: "TECA + Amino Acid Complex",
+                image: "https://prod.skin-seoul.com/wp-content/uploads/2024/05/thu_100005405_1-1.webp",
+                descriptionEs: "Limpiador suave que no altera el pH. Elimina impurezas sin resecar gracias a su complejo de aminoácidos y centella calmante.",
+                descriptionEn: "Gentle cleanser that respects pH. Removes impurities without drying thanks to its amino acid complex and soothing centella.",
+                howToUse: {
+                    when: { icon: "☀️🌙", value: "both" },
+                    amount: { icon: "🫧", value: "coin" },
+                    order: { icon: "1️⃣", value: "first" }
+                },
+                texture: { type: "creamy", icon: "🫧", descEs: "Espuma cremosa y suave tipo nube", descEn: "Soft cloud-like creamy foam" },
+                benefits: ["Limpieza suave", "pH equilibrado", "No reseca"]
+            },
+            {
+                id: 10,
+                brand: "Dr. Althea",
+                name: "345 Relief Cream",
+                concerns: ["acne", "pigmentacion", "enrojecimiento", "sensible"],
+                ingredients: ["niacinamida"],
+                keyIngredient: "Resveratrol + Pantenol",
+                keyIngredientEn: "Resveratrol + Panthenol",
+                image: "https://cdnx.jumpseller.com/exposed-beauty/image/70391935/resize/640/640?1764890154",
+                descriptionEs: "Gel-crema regenerador ideal para pieles propensas al acné. Calma rojeces rápidamente y ayuda a desvanecer marcas post-inflamatorias.",
+                descriptionEn: "Regenerating gel-cream ideal for acne-prone skin. Soothes redness quickly and helps fade post-inflammatory marks.",
+                howToUse: {
+                    when: { icon: "☀️🌙", value: "both" },
+                    amount: { icon: "🥥", value: "pearl" },
+                    order: { icon: "🔒", value: "last" }
+                },
+                texture: { type: "lightweight", icon: "🌊", descEs: "Gel-crema ligero de rápida absorción", descEn: "Lightweight gel-cream with fast absorption" },
+                benefits: ["Calma el acné", "Repara barrera", "Hidrata sin grasa"]
+            },
+            {
+                id: 11,
+                brand: "SEOUL 1988",
+                name: "Eye Cream : Retinal Liposome 4% + Fermented Bean",
+                concerns: ["arrugas", "pigmentacion", "deshidratada"],
+                ingredients: ["retinal"],
+                keyIngredient: "Retinal Liposoma 4%",
+                keyIngredientEn: "Retinal Liposome 4%",
+                image: "https://cdn2.surisuri.dk/uploads/products/seoul-1988-eye-cream-retinal-liposome-4-fermented-bean/_product/2081398/k-secret-seoul-1988-eye-cream-retinal-liposome-fermented-bean.webp",
+                descriptionEs: "Contorno de ojos potente con Retinal estabilizado para combatir arrugas profundas y ojeras, suavizado con fermentos de soja.",
+                descriptionEn: "Potent eye cream with stabilized Retinal to fight deep wrinkles and dark circles, softened with soybean ferments.",
+                howToUse: {
+                    when: { icon: "🌙", value: "night" },
+                    amount: { icon: "🤲", value: "rice" },
+                    order: { icon: "👁️", value: "eyeArea" }
+                },
+                texture: { type: "serum", icon: "✨", descEs: "Sérum suave específico para contorno de ojos", descEn: "Gentle serum specifically for eye area" },
+                benefits: ["Anti-arrugas ojos", "Retinal 4%", "Fermentados"]
+            },
+            {
+                id: 12,
+                brand: "Muldream",
+                name: "Vegan Green Mild CICA Ampoule",
+                concerns: ["sensible", "enrojecimiento", "acne", "deshidratada"],
+                ingredients: ["centella"],
+                keyIngredient: "Houttuynia Cordata + Centella",
+                keyIngredientEn: "Houttuynia Cordata + Centella",
+                image: "https://thegoodskncompany.com/wp-content/uploads/2023/01/GOODSKN-MULDREAM-CICA-AMPOULE.webp",
+                descriptionEs: "Ampolla minimalista y vegana para pieles ultra sensibles. Restaura el equilibrio de aceite y agua mientras calma brotes.",
+                descriptionEn: "Minimalist vegan ampoule for ultra-sensitive skin. Restores oil-water balance while calming breakouts.",
+                howToUse: {
+                    when: { icon: "☀️🌙", value: "both" },
+                    amount: { icon: "💧", value: "drops3" },
+                    order: { icon: "2️⃣", value: "afterToner" }
+                },
+                texture: { type: "watery", icon: "🍃", descEs: "Ampolla acuosa vegana de rápida absorción", descEn: "Fast-absorbing vegan watery ampoule" },
+                benefits: ["Vegano", "Calmante intensivo", "Piel sensible"]
+            },
+            {
+                id: 13,
+                brand: "OOTD",
+                name: "Collagen Supreme Mask",
+                concerns: ["arrugas", "deshidratada", "sensible"],
+                ingredients: ["hialuronico"],
+                keyIngredient: "Colágeno Hidrolizado + Péptidos",
+                keyIngredientEn: "Hydrolyzed Collagen + Peptides",
+                image: "https://bellkor.cl/cdn/shop/files/NU0407_CollagenSupremeMask_nukki04.jpg?v=1747966296&width=713",
+                descriptionEs: "Inyección de vitalidad para pieles maduras. El colágeno hidrolizado mejora la firmeza y rellena visiblemente la piel.",
+                descriptionEn: "Vitality injection for mature skin. Hydrolyzed collagen improves firmness and visibly plumps the skin.",
+                howToUse: {
+                    when: { icon: "🌙", value: "night" },
+                    amount: { icon: "💧", value: "oneMask" },
+                    order: { icon: "⏱️", value: "20min" }
+                },
+                texture: { type: "serum", icon: "🥚", descEs: "Esencia rica en colágeno tipo sérum", descEn: "Collagen-rich serum-like essence" },
+                benefits: ["Colágeno", "Elasticidad", "Anti-edad"]
+            },
+            {
+                id: 14,
+                brand: "OOTD",
+                name: "Ceramide Care Mask",
+                concerns: ["deshidratada", "sensible", "arrugas"],
+                ingredients: ["ceramidas"],
+                keyIngredient: "Triple Ceramida + Péptidos",
+                keyIngredientEn: "Triple Ceramide + Peptides",
+                image: "https://d1flfk77wl2xk4.cloudfront.net/Assets/11/409/XXL_p0203040911.jpg",
+                descriptionEs: "SOS para la barrera cutánea dañada. Las ceramidas fortalecen la protección natural de la piel contra agresores externos.",
+                descriptionEn: "SOS for damaged skin barrier. Ceramides strengthen the skin's natural protection against external aggressors.",
+                howToUse: {
+                    when: { icon: "☀️🌙", value: "both" },
+                    amount: { icon: "💧", value: "oneMask" },
+                    order: { icon: "⏱️", value: "15min" }
+                },
+                texture: { type: "creamy", icon: "🛡️", descEs: "Esencia cremosa que refuerza la barrera", descEn: "Creamy essence that strengthens barrier" },
+                benefits: ["Repara barrera", "Ceramidas", "Hidratación profunda"]
+            },
+            {
+                id: 15,
+                brand: "OOTD",
+                name: "Cica Soothing Mask",
+                concerns: ["enrojecimiento", "sensible", "acne"],
+                ingredients: ["centella"],
+                keyIngredient: "Complejo Cica + Pantenol",
+                keyIngredientEn: "Cica Complex + Panthenol",
+                image: "https://d1flfk77wl2xk4.cloudfront.net/Assets/25/023/XXL_p0213802325.jpg",
+                descriptionEs: "Alivio inmediato para rojeces y calor en la piel. Perfecta después de exposición solar o brotes de acné.",
+                descriptionEn: "Immediate relief for redness and skin heat. Perfect after sun exposure or acne breakouts.",
+                howToUse: {
+                    when: { icon: "🌙", value: "night" },
+                    amount: { icon: "💧", value: "oneMask" },
+                    order: { icon: "⏱️", value: "20min" }
+                },
+                texture: { type: "watery", icon: "🌿", descEs: "Esencia calmante ligera tipo agua", descEn: "Light water-type soothing essence" },
+                benefits: ["Calma rojeces", "Repara", "Post-acné"]
+            },
+            {
+                id: 16,
+                brand: "OOTD",
+                name: "Triple Hyaluron Serum Glowing Mask",
+                concerns: ["deshidratada", "pigmentacion", "arrugas"],
+                ingredients: ["hialuronico"],
+                keyIngredient: "Triple Ác. Hialurónico + Vitamina C",
+                keyIngredientEn: "Triple Hyaluronic + Vitamin C",
+                image: "https://hmartus.vtexassets.com/arquivos/ids/175698-1200-auto?v=638979559268970000&width=1200&height=auto&aspect=true",
+                descriptionEs: "Hidratación en 3 dimensiones. Combina diferentes pesos moleculares de hialurónico para hidratar dentro y fuera, más un toque de brillo.",
+                descriptionEn: "Hydration in 3 dimensions. Combines different hyaluronic molecular weights to hydrate inside and out, plus a touch of glow.",
+                howToUse: {
+                    when: { icon: "☀️", value: "morning" },
+                    amount: { icon: "💧", value: "oneMask" },
+                    order: { icon: "⏱️", value: "15min" }
+                },
+                texture: { type: "serum", icon: "💎", descEs: "Sérum brillante triple capa de hidratación", descEn: "Bright triple-layer hydration serum" },
+                benefits: ["Hidratación triple", "Brillo", "Vitamina C"]
+            },
+            {
+                id: 17,
+                brand: "SKIN1004",
+                name: "Madagascar Centella Hyalu-Cica First Ampoule",
+                concerns: ["deshidratada", "sensible", "enrojecimiento"],
+                ingredients: ["hialuronico", "centella"],
+                keyIngredient: "Fórmula Hyalu-Cica + Gardenia",
+                keyIngredientEn: "Hyalu-Cica Formula + Gardenia",
+                image: "https://http2.mlstatic.com/D_NQ_NP_2X_881233-MLC91971195874_092025-F.webp",
+                descriptionEs: "El primer paso tras la limpieza. Esta ampolla acuosa prepara la piel, aumenta la absorción de productos posteriores e hidrata al instante.",
+                descriptionEn: "The first step after cleansing. This watery ampoule preps the skin, boosts absorption of following products, and hydrates instantly.",
+                howToUse: {
+                    when: { icon: "☀️🌙", value: "both" },
+                    amount: { icon: "💧", value: "drops2" },
+                    order: { icon: "1️⃣", value: "first" }
+                },
+                texture: { type: "watery", icon: "💧", descEs: "Ampolla primer paso tipo esencia acuosa", descEn: "First-step ampoule with watery essence" },
+                benefits: ["Primer paso", "Prepara la piel", "Hialurónico + Cica"]
+            },
+            {
+                id: 18,
+                brand: "SKIN1004",
+                name: "Madagascar Centella Poremizing Quick Clay Stick Mask",
+                concerns: ["acne", "sensible", "enrojecimiento"],
+                ingredients: ["centella", "arcilla"],
+                keyIngredient: "Sal Rosa del Himalaya + Centella",
+                keyIngredientEn: "Himalayan Pink Salt + Centella",
+                image: "https://yeppo.cl/cdn/shop/files/SKIN1004-021-1_695x695.jpg?v=1750358638",
+                descriptionEs: "Mascarilla de arcilla en barra sin desorden. Limpia los poros y el exceso de sebo sin resecar, ideal para la zona T.",
+                descriptionEn: "Mess-free clay mask stick. Cleanses pores and excess sebum without drying, ideal for the T-zone.",
+                howToUse: {
+                    when: { icon: "☀️🌙", value: "both" },
+                    amount: { icon: "🤲", value: "swipe" },
+                    order: { icon: "⏱️", value: "3min" }
+                },
+                texture: { type: "creamy", icon: "🧱", descEs: "Barra de arcilla suave en formato stick", descEn: "Soft clay bar in convenient stick format" },
+                benefits: ["Limpia poros", "Formato stick", "No irrita"]
+            },
+            {
+                id: 19,
+                brand: "SNP",
+                name: "Peptaronic Serum",
+                concerns: ["deshidratada", "arrugas"],
+                ingredients: ["peptidos"],
+                keyIngredient: "6 Péptidos + 5 Tipos de Hialurónico",
+                keyIngredientEn: "6 Peptides + 5 Hyaluronic Types",
+                image: "https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/snp/snp64788/g/59.jpg",
+                descriptionEs: "Complejo todo en uno de péptidos para vitalidad y hialurónico para hidratación. Formato grande para uso generoso en cara y cuello.",
+                descriptionEn: "All-in-one complex of peptides for vitality and hyaluronic for hydration. Large format for generous use on face and neck.",
+                howToUse: {
+                    when: { icon: "☀️🌙", value: "both" },
+                    amount: { icon: "💧", value: "drops3" },
+                    order: { icon: "2️⃣", value: "afterToner" }
+                },
+                texture: { type: "serum", icon: "🧬", descEs: "Sérum ligero con microburbujas de peptidos", descEn: "Light serum with peptide micro-bubbles" },
+                benefits: ["6 Péptidos", "5 Hialurónicos", "Anti-edad"]
+            },
+            {
+                id: 20,
+                brand: "SNP",
+                name: "Peptaronic Cream",
+                concerns: ["deshidratada", "arrugas"],
+                ingredients: ["peptidos"],
+                keyIngredient: "6 Péptidos + 5 Tipos de Hialurónico",
+                keyIngredientEn: "6 Peptides + 5 Hyaluronic Types",
+                image: "https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/snp/snp64789/y/11.jpg",
+                descriptionEs: "Crema hidratante que sella la humedad sin sensación grasa. Los péptidos trabajan para mantener la estructura de la piel firme.",
+                descriptionEn: "Moisturizing cream that seals in moisture without a greasy feel. Peptides work to keep skin structure firm.",
+                howToUse: {
+                    when: { icon: "☀️🌙", value: "both" },
+                    amount: { icon: "🥥", value: "pearl" },
+                    order: { icon: "🔒", value: "last" }
+                },
+                texture: { type: "lightweight", icon: "☁️", descEs: "Crema ligera tipo nube con microburbujas", descEn: "Cloud-like lightweight cream with micro-bubbles" },
+                benefits: ["Hidratación 24h", "Péptidos", "Textura única"]
+            },
+            {
+                id: 21,
+                brand: "SNP",
+                name: "Peptaronic Eye Cream",
+                concerns: ["arrugas", "deshidratada"],
+                ingredients: ["peptidos"],
+                keyIngredient: "6 Péptidos + 5 Tipos de Hialurónico",
+                keyIngredientEn: "6 Peptides + 5 Hyaluronic Types",
+                image: "https://www.sasa.com/cdn/shop/files/110013204002-2.jpg?v=1728638996&width=990",
+                descriptionEs: "Cuidado económico pero efectivo para ojos. Hidrata la delicada zona y previene líneas de expresión por deshidratación.",
+                descriptionEn: "Affordable yet effective eye care. Hydrates the delicate area and prevents dehydration lines.",
+                howToUse: {
+                    when: { icon: "☀️🌙", value: "both" },
+                    amount: { icon: "🤲", value: "rice" },
+                    order: { icon: "👁️", value: "eyeArea" }
+                },
+                texture: { type: "creamy", icon: "👁️", descEs: "Crema suave específica para ojos", descEn: "Gentle cream specifically for eyes" },
+                benefits: ["Contorno de ojos", "Anti-arrugas", "Hidratante"]
+            },
+            {
+                id: 22,
+                brand: "The Saem",
+                name: "Healing Tea Garden Cleansing Water (Tea Tree)",
+                concerns: ["acne", "enrojecimiento", "sensible"],
+                ingredients: ["tea tree"],
+                keyIngredient: "Extracto de Árbol de Té Australiano",
+                keyIngredientEn: "Australian Tea Tree Extract",
+                image: "https://www.japandostavka.ru/img/600/600/UserFiles/Image/img42899_31891.jpg",
+                descriptionEs: "Agua limpiadora refrescante que elimina maquillaje y exceso de grasa en un paso. El árbol de té ayuda a controlar brotes.",
+                descriptionEn: "Refreshing cleansing water that removes makeup and excess oil in one step. Tea tree helps control breakouts.",
+                howToUse: {
+                    when: { icon: "☀️🌙", value: "both" },
+                    amount: { icon: "💧", value: "soakPad" },
+                    order: { icon: "1️⃣", value: "first" }
+                },
+                texture: { type: "watery", icon: "🍃", descEs: "Agua micelar purificante tipo esencia", descEn: "Purifying micellar water essence" },
+                benefits: ["Limpia sin enjuague", "Purificante", "Tea tree"]
+            },
+            {
+                id: 23,
+                brand: "VT Cosmetics",
+                name: "PDRN Hyaluronic Mint Micro Bubble Serum",
+                concerns: ["arrugas", "deshidratada", "enrojecimiento"],
+                ingredients: ["hialuronico"],
+                keyIngredient: "Phyto-PDRN + Hialurónico",
+                keyIngredientEn: "Phyto-PDRN + Hyaluronic",
+                image: "https://http2.mlstatic.com/D_NQ_NP_2X_901315-MLC95242872289_102025-F.webp",
+                descriptionEs: "Sérum efervescente único. Las microburbujas ayudan a penetrar los ingredientes activos para una piel revitalizada y fresca.",
+                descriptionEn: "Unique effervescent serum. Micro-bubbles help penetrate active ingredients for revitalized, fresh skin.",
+                howToUse: {
+                    when: { icon: "☀️🌙", value: "both" },
+                    amount: { icon: "💧", value: "drops2" },
+                    order: { icon: "2️⃣", value: "afterToner" }
+                },
+                texture: { type: "gel", icon: "🫧", descEs: "Sérum gel con microburbujas refrescantes", descEn: "Gel serum with refreshing micro-bubbles" },
+                benefits: ["Microburbujas", "PDRN vegetal", "Refrescante"]
+            }
         ];
 
-        /* --- LÓGICA DE NEGOCIO --- */
+        /* ============================================
+           DOM ELEMENTS
+           ============================================ */
         const grid = document.getElementById('resultsGrid');
         const concernCards = document.querySelectorAll('.concern-card');
         const brandsContainer = document.getElementById('brandsContainer');
         const langToggle = document.getElementById('langToggle');
+        
+        // Modal elements
+        const modal = document.getElementById('productModal');
+        const modalClose = document.getElementById('modalClose');
+        const modalBrand = document.getElementById('modalBrand');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalImage = document.getElementById('modalImage');
+        const modalDetailsContainer = document.getElementById('modalDetailsContainer');
+        const modalCta = document.getElementById('modalCta');
 
         let activeConcern = 'deshidratada';
         let selectedBrands = new Set();
+        let currentProduct = null;
 
+        /* ============================================
+           UTILITY FUNCTIONS
+           ============================================ */
+        function getRoutineText(key) {
+            return translations[currentLang].routine[key] || key;
+        }
+
+        function getTextureText(key) {
+            return translations[currentLang].texture[key] || key;
+        }
+
+        function getAmountText(value) {
+            const texts = {
+                es: {
+                    pearl: "Una perla (tamaño guisante)",
+                    twoFingers: "Dos dedos de producto",
+                    oneMask: "Una mascarilla",
+                    drops2: "2-3 gotas",
+                    drops3: "3-4 gotas",
+                    rice: "Un grano de arroz",
+                    coin: "Moneda de 10 centavos",
+                    soakPad: "Almohadilla empapada",
+                    swipe: "Un deslizamiento"
+                },
+                en: {
+                    pearl: "A pearl (pea-sized)",
+                    twoFingers: "Two fingers worth",
+                    oneMask: "One sheet mask",
+                    drops2: "2-3 drops",
+                    drops3: "3-4 drops",
+                    rice: "A grain of rice",
+                    coin: "10-cent coin size",
+                    soakPad: "Soaked cotton pad",
+                    swipe: "One swipe"
+                }
+            };
+            return texts[currentLang][value] || value;
+        }
+
+        function getOrderText(value) {
+            const texts = {
+                es: {
+                    first: "Primer paso",
+                    afterToner: "Después del tónico",
+                    afterCleansing: "Después de limpiar",
+                    beforeMoisturizer: "Antes del hidratante",
+                    last: "Último paso de rutina",
+                    eyeArea: "Aplicar en contorno de ojos",
+                    "15min": "Dejar actuar 15 min",
+                    "20min": "Dejar actuar 20 min",
+                    "30min": "Dejar actuar 30 min",
+                    "3min": "Dejar actuar 3 min"
+                },
+                en: {
+                    first: "First step",
+                    afterToner: "After toner",
+                    afterCleansing: "After cleansing",
+                    beforeMoisturizer: "Before moisturizer",
+                    last: "Final routine step",
+                    eyeArea: "Apply to eye area",
+                    "15min": "Leave on for 15 min",
+                    "20min": "Leave on for 20 min",
+                    "30min": "Leave on for 30 min",
+                    "3min": "Leave on for 3 min"
+                }
+            };
+            return texts[currentLang][value] || value;
+        }
+
+        /* ============================================
+           INITIALIZATION
+           ============================================ */
         function init() {
-            // Inicializar textos
             updateLanguageTexts();
-            renderBrandFilters(); 
+            renderBrandFilters();
             renderProducts();
-            
-            // Listener Toggle Idioma
-            langToggle.addEventListener('click', () => {
-                currentLang = currentLang === 'es' ? 'en' : 'es';
-                
-                // Actualizar clases visuales
-                langToggle.classList.remove('es', 'en');
-                langToggle.classList.add(currentLang);
-                
-                // Actualizar textos y re-renderizar
-                updateLanguageTexts();
-                renderBrandFilters(); // Re-renderizar marcas para cambiar "Todas" / "All"
-                refreshGrid();
-            });
+            setupEventListeners();
+        }
 
-            // Listeners de Necesidades
+        function setupEventListeners() {
+            // Language toggle
+            langToggle.addEventListener('click', toggleLanguage);
+
+            // Concern cards
             concernCards.forEach(card => {
-                card.addEventListener('click', (e) => {
-                    const target = e.currentTarget;
-                    const isAlreadyActive = target.classList.contains('active');
-                    
-                    concernCards.forEach(c => c.classList.remove('active'));
+                card.addEventListener('click', handleConcernClick);
+            });
 
-                    if (isAlreadyActive) {
-                        activeConcern = 'todos'; 
-                    } else {
-                        target.classList.add('active');
-                        activeConcern = target.dataset.concern;
-                    }
-                    refreshGrid();
-                });
+            // Modal close
+            modalClose.addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) closeModal();
+            });
+
+            // Keyboard escape to close modal
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && modal.classList.contains('active')) {
+                    closeModal();
+                }
             });
         }
 
-        // Función para actualizar textos estáticos del UI
-        function updateLanguageTexts() {
-            // Cards de Necesidades
-            document.getElementById('lbl-deshidratada').innerText = translations[currentLang].concerns.deshidratada;
-            document.getElementById('lbl-arrugas').innerText = translations[currentLang].concerns.arrugas;
-            document.getElementById('lbl-enrojecimiento').innerText = translations[currentLang].concerns.enrojecimiento;
-            document.getElementById('lbl-acne').innerText = translations[currentLang].concerns.acne;
-            document.getElementById('lbl-sensible').innerText = translations[currentLang].concerns.sensible;
-            document.getElementById('lbl-pigmentacion').innerText = translations[currentLang].concerns.pigmentacion;
-
-            // Etiquetas Generales
-            document.getElementById('lbl-brands').innerText = translations[currentLang].ui.brands;
+        /* ============================================
+           LANGUAGE FUNCTIONS
+           ============================================ */
+        function toggleLanguage() {
+            currentLang = currentLang === 'es' ? 'en' : 'es';
+            
+            langToggle.classList.remove('es', 'en');
+            langToggle.classList.add(currentLang);
+            
+            updateLanguageTexts();
+            renderBrandFilters();
+            refreshGrid();
+            
+            // Update modal if open
+            if (currentProduct && modal.classList.contains('active')) {
+                openModal(currentProduct);
+            }
         }
 
+        function updateLanguageTexts() {
+            const t = translations[currentLang];
+            
+            // Section labels
+            document.getElementById('lbl-concerns-section').textContent = t.ui.concernsSection;
+            document.getElementById('lbl-brands-section').textContent = t.ui.brandsSection;
+            document.getElementById('lbl-brands').textContent = t.ui.brands;
+            
+            // Concern cards
+            document.getElementById('lbl-deshidratada').textContent = t.concerns.deshidratada;
+            document.getElementById('lbl-arrugas').textContent = t.concerns.arrugas;
+            document.getElementById('lbl-enrojecimiento').textContent = t.concerns.enrojecimiento;
+            document.getElementById('lbl-acne').textContent = t.concerns.acne;
+            document.getElementById('lbl-sensible').textContent = t.concerns.sensible;
+            document.getElementById('lbl-pigmentacion').textContent = t.concerns.pigmentacion;
+
+            modalCta.textContent = t.ui.ctaButton;
+        }
+
+        /* ============================================
+           BRAND FILTERS
+           ============================================ */
         function renderBrandFilters() {
             const uniqueBrands = [...new Set(productsDB.map(p => p.brand))].sort((a, b) => a.localeCompare(b));
             
-            // Limpiar contenedores excepto el label
             const label = brandsContainer.querySelector('.filter-label');
             brandsContainer.innerHTML = '';
             brandsContainer.appendChild(label);
 
-            // Botón Todas/All
+            // All button
             const allBtn = document.createElement('button');
-            allBtn.className = 'brand-btn active'; 
-            allBtn.innerText = translations[currentLang].ui.all; // TRADUCCION AQUI
+            allBtn.className = 'brand-btn active';
+            allBtn.textContent = translations[currentLang].ui.all;
             allBtn.id = 'btn-all-brands';
             allBtn.addEventListener('click', () => {
                 selectedBrands.clear();
@@ -399,34 +1617,27 @@
             });
             brandsContainer.appendChild(allBtn);
 
-            // Botones de Marca (Estos no se traducen, son nombres propios)
+            // Brand buttons
             uniqueBrands.forEach(brand => {
                 const btn = document.createElement('button');
                 btn.className = 'brand-btn';
-                btn.innerText = brand;
+                btn.textContent = brand;
                 btn.dataset.brand = brand;
                 
                 btn.addEventListener('click', (e) => {
-                    const target = e.currentTarget;
-                    const brandName = target.dataset.brand;
-
+                    const brandName = e.currentTarget.dataset.brand;
                     if (selectedBrands.has(brandName)) {
                         selectedBrands.delete(brandName);
                     } else {
                         selectedBrands.add(brandName);
                     }
-                    
                     updateBrandVisuals();
                     refreshGrid();
                 });
 
-                // Restaurar estado visual si estaba seleccionado antes de cambiar idioma
-                if(selectedBrands.has(brand)) {
-                    // Esperar al updateBrandVisuals o hacerlo manual aqui, 
-                    // pero updateBrandVisuals lo maneja bien al final
-                }
                 brandsContainer.appendChild(btn);
             });
+            
             updateBrandVisuals();
         }
 
@@ -440,18 +1651,41 @@
             } else {
                 allBtn.classList.remove('active');
                 brandBtns.forEach(b => {
-                    if (selectedBrands.has(b.dataset.brand)) {
-                        b.classList.add('active');
-                    } else {
-                        b.classList.remove('active');
-                    }
+                    b.classList.toggle('active', selectedBrands.has(b.dataset.brand));
                 });
             }
         }
 
+        /* ============================================
+           CONCERN HANDLING
+           ============================================ */
+        function handleConcernClick(e) {
+            const target = e.currentTarget;
+            const isAlreadyActive = target.classList.contains('active');
+            
+            concernCards.forEach(c => c.classList.remove('active'));
+
+            if (isAlreadyActive) {
+                activeConcern = 'todos';
+            } else {
+                target.classList.add('active');
+                activeConcern = target.dataset.concern;
+            }
+            
+            refreshGrid();
+        }
+
+        /* ============================================
+           PRODUCT GRID
+           ============================================ */
         function refreshGrid() {
             grid.style.opacity = '0';
-            setTimeout(() => { renderProducts(); grid.style.opacity = '1'; }, 150);
+            grid.style.transform = 'translateY(10px)';
+            setTimeout(() => {
+                renderProducts();
+                grid.style.opacity = '1';
+                grid.style.transform = 'translateY(0)';
+            }, 200);
         }
 
         function renderProducts() {
@@ -464,30 +1698,135 @@
             grid.innerHTML = '';
             
             if (filtered.length === 0) {
-                grid.innerHTML = `<div class="empty-state">${translations[currentLang].ui.empty}</div>`;
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🔍</div>
+                        ${translations[currentLang].ui.empty}
+                    </div>
+                `;
                 return;
             }
 
-            filtered.forEach(p => {
-                // Lógica para elegir el ingrediente en el idioma correcto
-                // Si existe keyIngredientEn y el idioma es 'en', usalo. Si no, usa el default.
-                let ingredientText = p.keyIngredient;
-                if (currentLang === 'en' && p.keyIngredientEn) {
-                    ingredientText = p.keyIngredientEn;
-                }
+            filtered.forEach((p, index) => {
+                const ingredientText = (currentLang === 'en' && p.keyIngredientEn) ? p.keyIngredientEn : p.keyIngredient;
 
                 const card = document.createElement('div');
                 card.className = 'product-card';
+                card.style.animationDelay = `${index * 0.05}s`;
                 card.innerHTML = `
-                    <div class="img-container"><img src="${p.image}" class="product-img"></div>
+                    <div class="img-container">
+                        <img src="${p.image}" class="product-img" alt="${p.name}" loading="lazy">
+                    </div>
                     <div class="brand-name">${p.brand}</div>
                     <h3 class="product-name">${p.name}</h3>
                     <div class="key-ingredient">${ingredientText}</div>
                 `;
+                
+                card.addEventListener('click', () => openModal(p));
                 grid.appendChild(card);
             });
         }
 
+        /* ============================================
+           MODAL FUNCTIONS
+           ============================================ */
+        function openModal(product) {
+            currentProduct = product;
+            
+            const t = translations[currentLang];
+            const ingredientText = (currentLang === 'en' && product.keyIngredientEn) ? product.keyIngredientEn : product.keyIngredient;
+            const descText = currentLang === 'en' ? product.descriptionEn : product.descriptionEs;
+            
+            // Set Header and Image
+            modalBrand.textContent = product.brand;
+            modalTitle.textContent = product.name;
+            modalImage.src = product.image;
+            modalImage.alt = product.name;
+
+            // Build Inner HTML for Details Section
+            let benefitsHTML = product.benefits.map(b => `<span class="benefit-tag">${b}</span>`).join('');
+            
+            const contentHTML = `
+                <div class="info-section">
+                     <p class="info-title">
+                        <span class="info-title-icon">📝</span>
+                        <span>${t.ui.description}</span>
+                    </p>
+                    <p class="modal-description-text">${descText}</p>
+                </div>
+
+                <div class="ingredient-badge">
+                    <span class="ingredient-icon">✨</span>
+                    <span class="ingredient-text">${ingredientText}</span>
+                </div>
+
+                <div class="info-section">
+                    <p class="info-title">
+                        <span class="info-title-icon">📋</span>
+                        <span>${t.ui.howToUse}</span>
+                    </p>
+                    <div class="routine-steps">
+                        <div class="routine-step">
+                            <div class="step-icon">${product.howToUse.when.icon}</div>
+                            <div class="step-content">
+                                <p class="step-label">${getRoutineText('when')}</p>
+                                <p class="step-value">${getRoutineText(product.howToUse.when.value)}</p>
+                            </div>
+                        </div>
+                        <div class="routine-step">
+                            <div class="step-icon">${product.howToUse.amount.icon}</div>
+                            <div class="step-content">
+                                <p class="step-label">${getRoutineText('amount')}</p>
+                                <p class="step-value">${getAmountText(product.howToUse.amount.value)}</p>
+                            </div>
+                        </div>
+                        <div class="routine-step">
+                            <div class="step-icon">${product.howToUse.order.icon}</div>
+                            <div class="step-content">
+                                <p class="step-label">${getRoutineText('order')}</p>
+                                <p class="step-value">${getOrderText(product.howToUse.order.value)}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <p class="info-title">
+                        <span class="info-title-icon">💧</span>
+                        <span>${t.ui.texture}</span>
+                    </p>
+                    <div class="texture-card">
+                        <span class="texture-icon">${product.texture.icon}</span>
+                        <div class="texture-content">
+                            <p class="texture-name">${getTextureText(product.texture.type)}</p>
+                            <p class="texture-desc">${currentLang === 'en' ? product.texture.descEn : product.texture.descEs}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <p class="info-title">
+                        <span class="info-title-icon">🎯</span>
+                        <span>${t.ui.benefits}</span>
+                    </p>
+                    <div class="benefits-list">${benefitsHTML}</div>
+                </div>
+            `;
+
+            modalDetailsContainer.innerHTML = contentHTML;
+
+            // Show modal
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+            currentProduct = null;
+        }
+
+        // Initialize app
         init();
     </script>
 </body>
